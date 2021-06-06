@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta carset="UTF-8">
+    <title>E-library</title>
+    <link rel="stylesheet" href="style1.css">
+
+    <style>
+        #main {
+            width: 50%;
+            height: 50%;
+            border: white;
+            color: rgb(220, 196, 196);
+            border: 3px solid #f1f1f1;
+            display: flex;
+            background-image: "https://www.publicdomainpictures.net/pictures/330000/velka/orange-marble-background-1587655158XeG.jpg";
+            transform: translate(50%, 0%);
+            text-align: center;
+        }
+        
+        #main div {
+            -ms-flex: 1;
+            /* IE 10 */
+            flex: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="banner-img"></div>
+    <div id="main">
+        <div style="background-color:rgba(92, 38, 22, 0.753)">
+
+            <ol>
+
+                <font size="7" face="cantal">Welcome to E-library 📚</font>
+
+                <br>
+
+
+                <h2>
+
+                    <font face="cantal">• If you want to insert a book, complete the following fields</font>
+
+                </h2>
+
+
+
+                <font face="cantal">Author(required):<input type="text" id="tb1" name="author" maxlength="25" pattern="[a-z]" placeholder="Author"></font>
+                <button onclick="document.getElementById('tb1').value = ''">Clear input field</button>
+
+                <p></p>
+
+                <font face="cantal">Title:( required) <input type="text" id="tb2" name="title" minlength="3" maxlength="25" placeholder="Title"></font>
+                <button onclick="document.getElementById('tb2').value = ''">Clear input field</button>
+
+                <p></p>
+
+
+                <font face="cantal">Genre: </font><select name="genre" id="tb3">
+              
+              <option value="Science fiction">science fiction</option>
+              <option value="Satire">satire</option>
+              <option value="Drama">drama</option>
+              <option value="Action and Adventure">action and adventure</option>
+              <option value="Romance">romance</option>
+              <option value="Mystery">mystery</option>
+              <option value="HorrorDrama">horror</option>
+            </select>
+
+
+
+
+                <p></p>
+                <font face="cantal"><label for="price"></label> Price:(required) <input type="number" id="tb4" name="price" min="0" max="25" placeholder="€ Price"></font>
+                <span class="validity"></span>
+                <button onclick="document.getElementById('tb4').value = ''">Clear input field</button>
+
+
+            </ol>
+
+
+            <br>
+            <input type="button" id="sendRequest" value="send" class="btn">
+
+
+            <div id="booksArea"></div>
+
+
+            <script type="text/javascript">
+                window.addEventListener('load', (event) => {
+
+                    document.getElementById('sendRequest').addEventListener('click', (event) => {
+                        const books = {
+                            'author': document.getElementById('tb1').value,
+                            'title': document.getElementById('tb2').value,
+                            'genre': document.getElementById('tb3').value,
+                            'price': document.getElementById('tb4').value
+                        };
+
+                        //check if an element is empty
+                        if (document.getElementById('tb1').value == "") {
+                            alert("complete all the fields!")
+                            document.getElementById('tb1').value
+                            return false
+                        }
+                        if (document.getElementById('tb2').value == "") {
+                            alert("complete all the fields!")
+                            document.getElementById('tb2').value
+                            return false
+                        }
+                        if (document.getElementById('tb4').value == "" || document.getElementById('tb4').value < 0 || document.getElementById('tb4').value > 25) {
+                            alert("please enter a price between 0 and 25")
+                            document.getElementById('tb4').value
+                            return false
+                        }
+
+                        const xhr = new XMLHttpRequest();
+                        xhr.open("POST", 'http://localhost:3000/books', true);
+                        xhr.setRequestHeader("Content-Type", "application/json");
+                        xhr.onreadystatechange = function() {
+                            if (xhr.readyState == 4) {
+                                if (xhr.status == 200) {
+                                    alert(xhr.responseText);
+                                }
+                            }
+
+                        };
+                        xhr.send(JSON.stringify(books));
+
+                    });
+
+                });
+            </script>
+
+
+
+
+            <p>
+                <h2>
+                    <font face="cantal">• If you are looking for a specific book, please enter his title </font>
+                </h2>
+            </p>
+
+            <input type="text" id="key" name="key" placeholder="Title"> <br>
+            <p></p>
+            <input type="button" id="getBooksByKey" value="get Books by title" class="btn">
+            <br>
+            <div id="searchBooksArea"></div>
+
+
+            <script type="text/javascript">
+                window.addEventListener('load', (event) => {
+                    document.getElementById('getBooksByKey').addEventListener('click', (event) => {
+                        const key = document.getElementById('key').value;
+                        const xhr = new XMLHttpRequest();
+
+                        //check if he has entered a title(key)
+                        if (document.getElementById('key').value == "") {
+                            alert("please enter a key for search")
+                            document.getElementById('key').value
+                            return false
+                        }
+
+                        xhr.open('GET', `http://localhost:3000/books/${key}`, true);
+                        xhr.send();
+
+                        xhr.onreadystatechange = function() {
+                            if (xhr.readyState == 4) {
+                                if (xhr.status == "200") {
+                                    let divElem = document.getElementById('searchBooksArea');
+
+                                    while (divElem.firstChild) {
+                                        divElem.removeChild(divElem.firstChild);
+                                    }
+
+                                    const results = JSON.parse(xhr.responseText);
+
+                                    //if a title doens't match with any title of the database
+                                    if (results.length == 0) {
+
+                                        let errorTextNode = document.createTextNode("There are no books with this title");
+                                        divElem.appendChild(errorTextNode);
+                                        return false;
+                                    }
+
+
+                                    const item = results[2];
+
+
+                                    results.forEach((item) => {
+                                        divElem.innerHTML += `${item.author} wrote ${item.title} : ${item.genre} : € ${item.price}<br>`;
+                                    });
+
+
+
+                                }
+                            }
+                        };
+
+
+
+                    });
+                });
+            </script>
+
+
+
+            <p>
+                <h2>
+                    <font face="cantal">• If you want to see all the books, press the following button</font>
+                </h2>
+            </p>
+
+
+            <input type="button" value="get Books" id="searchBooks" class="btn">
+            <div id="searchAllBooksArea"></div>
+            <p></p>
+            <p></p>
+
+
+
+            <script type="text/javascript">
+                window.addEventListener('load', (event) => {
+                    document.getElementById('searchBooks').addEventListener('click', (event) => {
+                        const xhr = new XMLHttpRequest();
+                        xhr.open('GET', 'http://localhost:3000/listBooks', true);
+                        xhr.send();
+
+
+
+                        xhr.onreadystatechange = function() {
+
+
+                            if (xhr.readyState == 4) {
+                                if (xhr.status == 200) {
+
+
+                                    let divElem = document.getElementById('searchAllBooksArea');
+
+
+                                    while (divElem.firstChild) {
+                                        divElem.removeChild(divElem.firstChild);
+                                    }
+
+                                    const results = JSON.parse(xhr.responseText);
+
+                                    //if database is empty
+                                    if (results.length == 0) {
+
+                                        let errorTextNode = document.createTextNode("There are no books in our system");
+                                        divElem.appendChild(errorTextNode);
+                                        return false;
+                                    }
+
+                                    results.forEach((item) => {
+
+                                        divElem.innerHTML += `${item.author} WROTE: ${item.title} : ${item.genre} : € ${item.price}<br>`;
+
+                                    });
+
+
+
+
+                                }
+
+
+                            }
+                        }
+
+                    });
+
+                });
+            </script>
+        </div>
+    </div>
+
+
+</body>
+
+</html>
+
+</html>
