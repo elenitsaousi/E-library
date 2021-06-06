@@ -181,9 +181,9 @@
                                     //if a title doens't match with any title of the database
                                     if (results.length == 0) {
 
-                                        let errorTextNode = document.createTextNode("There are no books with this title");
-                                        divElem.appendChild(errorTextNode);
-                                        return false;
+                                         var message = document.createTextNode("There are no books with this title");
+                                        p = divElem.appendChild(message);
+                                        return p;
                                     }
 
 
@@ -250,9 +250,9 @@
                                     //if database is empty
                                     if (results.length == 0) {
 
-                                        let errorTextNode = document.createTextNode("There are no books in our system");
-                                        divElem.appendChild(errorTextNode);
-                                        return false;
+                                         var message = document.createTextNode("There are no books in our system");
+                                        p = divElem.appendChild(message);
+                                        return p;
                                     }
 
                                     results.forEach((item) => {
