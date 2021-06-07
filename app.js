@@ -1,23 +1,23 @@
-//const data = require('./data.js');
-
+//server
 const express = require('express');
 
 const cors = require('cors');
-const { query } = require('express'); //to ekana etsi giati mou ipogrammize to -> const parser = require('body-parser')
+const parser = require('body-parser');
+//const { query } = require('express'); //to ekana etsi giati mou ipogrammize to -> const parser = require('body-parser')
 const app = express();
+app.use(parser.json());
 
-
-
+//database (sqlite3)
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('books.sqlite');
 
 app.use(cors())
 app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
+    //app.use(express.urlencoded({ extended: true }))
 
 
 
-//post value
+//places on the database all the information provided by the user
 
 app.post('/books', (req, res) => {
     const books = req.body;
@@ -34,34 +34,44 @@ app.post('/books', (req, res) => {
 
 
 
-//Get value by title
-app.get('/books/:key', (req, res) => {
+//returns from the database all the values of the book which has the same title with the user's input
+app.get('/books/:key', async(req, res) => {
     const q = `SELECT * FROM books WHERE title LIKE '%${req.params.key}%';`;
-    db.all(q, (err, rows) => {
-        if (err) {
-            console.err('Error querying db');
-            res.send('error querying db');
-        } else {
-            res.send(JSON.stringify(rows));
-        }
-    });
+    try {
+        const rows = await query(q);
+        res.send(JSON.stringify(rows));
+    } catch (err) {
+        res.send('error excecuting query');
+    }
 });
 
 
 
-//read Get value
-app.get('/listBooks', (req, res) => {
+//read all the books from the database
+app.get('/listBooks', async(req, res) => {
     const q = 'SELECT * FROM books';
-    db.all(q, (err, rows) => {
-        if (err) {
-            console.err('Error querying db');
-            res.send('error querying db');
-        } else {
-            res.send(JSON.stringify(rows));
-        }
-    });
+    try {
+        const rows = await query(q);
+        res.send(JSON.stringify(rows));
+    } catch (err) {
+        res.send('error excecuting query');
+    }
 });
 
+//async function
+function query(q) {
+    return new Promise((resolve, reject) => {
+        db.all(q, (err, rows) => {
+            if (err) {
+                reject(err);
+                exit(err);
+            } else {
+                resolve(rows);
+            }
+        });
+    });
 
+}
 
+//the port of server
 app.listen(3000);
