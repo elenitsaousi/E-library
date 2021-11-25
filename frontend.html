@@ -121,7 +121,7 @@
                         }
 
                         const xhr = new XMLHttpRequest();
-                        xhr.open("POST", 'http://192.168.1.7:3000/books', true);
+                        xhr.open("POST", 'http://localhost:3000/books', true);
                         xhr.setRequestHeader("Content-Type", "application/json");
 
                         //check if all is ok and then send the request
@@ -145,7 +145,7 @@
 
             <p>
                 <h2>
-                    <font face="cantal">• If you are looking for a specific book, please enter his title </font>
+                    <font face="cantal">If you are looking for a specific book, please enter his title </font>
                 </h2>
             </p>
 
@@ -169,7 +169,7 @@
                             return false
                         }
 
-                        xhr.open('GET', `http://192.168.1.7:3000/books/${key}`, true);
+                        xhr.open('GET', `http://localhost:3000/books/${key}`, true);
                         xhr.send();
 
                         //check if all is ok and then send the request
@@ -237,7 +237,7 @@
                 window.addEventListener('load', (event) => {
                     document.getElementById('searchBooks').addEventListener('click', (event) => {
                         const xhr = new XMLHttpRequest();
-                        xhr.open('GET', 'http://192.168.1.7:3000/listBooks', true);
+                        xhr.open('GET', 'http://localhost:3000/listBooks', true);
                         xhr.send();
 
 
