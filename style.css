@@ -1,4 +1,11 @@
 
+input:invalid+span:after {
+    content: '*Σημείωση: Ο ελάχιστος αριθμός είναι το 0 και ο μέγιστος το 25';
+    padding-left: 10px;
+    text-decoration: underline rgb(10, 10, 10);
+    border-color: darkred;
+}
+
 body {
     /* the image used*/
     background-image: url("https://wallpaperaccess.com/full/1411530.jpg");
